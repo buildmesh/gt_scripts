@@ -103,29 +103,26 @@ def loop_once(iteration: int) -> None:
         if rig_status_output is not None:
             idle_polecats = has_done_polecat(rig_status_output)
 
+        message = []
+        label = []
         if idle_polecats:
-            run_command(
-                [
-                    "gt",
-                    "nudge",
-                    f"{rig_name}/witness",
-                    "-m",
-                    "Please check on stale polecats and 'gt done' them",
-                ],
-                f"nudge witness for {rig_name}",
-            )
+            message.append("Please check on stale polecats and 'gt done' them. Note - if a polecat has submitted work to MQ, they need to be 'gt done', regardless of merge conflicts. Any merge conflicts will handled in a new bead and slung to another polecat.")
+            label.append("Clear stale polecats for {rig_name}")
 
         if iteration % 5 == 0:
-            print(f"[{timestamp()}] periodic witness health check triggered for {rig_name}")
+            message.append("Please check on all working polecats and make sure they aren't stuck or nonresponsive")
+            label.append(f"periodic witness health nudge for {rig_name}")
+
+        if (message):
             run_command(
                 [
                     "gt",
                     "nudge",
                     f"{rig_name}/witness",
                     "-m",
-                    "Please check on all working polecats and make sure they aren't stuck or nonresponsive",
+                    "\n\n".join(message),
                 ],
-                f"periodic witness health nudge for {rig_name}",
+                "\n\n".join(label)
             )
 
         mq = run_json_command(
@@ -134,7 +131,7 @@ def loop_once(iteration: int) -> None:
         )
         if mq:
             run_command(
-                ["gt", "nudge", f"{rig_name}/refinery", "-m", "Please process merge queue. Merge conflicts should result in a bead to resolve the merge conflict"],
+                ["gt", "nudge", f"{rig_name}/refinery", "-m", "Please process merge queue. Please advance MQ and let conflict follow-up bead routing handle any conflicts."],
                 f"nudge refinery for {rig_name}",
             )
 
