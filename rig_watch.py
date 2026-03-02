@@ -82,7 +82,7 @@ def has_done_polecat(rig_status_output: str) -> bool:
     return False
 
 
-def loop_once() -> None:
+def loop_once(iteration: int) -> None:
     rigs = run_json_command(["gt", "rig", "list", "--json"], "gt rig list --json")
     if rigs is None:
         return
@@ -115,6 +115,19 @@ def loop_once() -> None:
                 f"nudge witness for {rig_name}",
             )
 
+        if iteration % 5 == 0:
+            print(f"[{timestamp()}] periodic witness health check triggered for {rig_name}")
+            run_command(
+                [
+                    "gt",
+                    "nudge",
+                    f"{rig_name}/witness",
+                    "-m",
+                    "Please check on all working polecats and make sure they aren't stuck or nonresponsive",
+                ],
+                f"periodic witness health nudge for {rig_name}",
+            )
+
         mq = run_json_command(
             ["gt", "mq", "list", rig_name, "--json"],
             f"gt mq list {rig_name} --json",
@@ -128,9 +141,11 @@ def loop_once() -> None:
 
 def main() -> None:
     print(f"[{timestamp()}] Starting rig watcher. Press CTRL-C to stop.")
+    iteration = 0
     try:
         while True:
-            loop_once()
+            iteration += 1
+            loop_once(iteration)
             time.sleep(LOOP_INTERVAL_SECONDS)
     except KeyboardInterrupt:
         print(f"\n[{timestamp()}] Stopping rig watcher.")
