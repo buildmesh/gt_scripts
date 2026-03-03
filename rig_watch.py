@@ -106,7 +106,7 @@ def loop_once(iteration: int) -> None:
         message = []
         label = []
         if idle_polecats:
-            message.append("Please check on stale polecats and 'gt done' them. Note - if a polecat has submitted work to MQ, they need to be 'gt done', regardless of merge conflicts. Any merge conflicts will handled in a new bead and slung to another polecat.")
+            message.append("Please check on stale polecats and 'gt done' them. Note - if a polecat has submitted work to MQ, they need to be 'gt done', regardless of merge conflicts. Any merge conflicts will handled in a new bead and slung to another polecat. Also, if a polecat reports no work on hook, they also need to be 'gt done'")
             label.append("Clear stale polecats for {rig_name}")
 
         if iteration % 5 == 0:
