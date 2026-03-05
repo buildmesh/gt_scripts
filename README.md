@@ -44,6 +44,20 @@ cd ~/gt/scripts
 make rig_watch
 ```
 
+## `economy.py`
+
+`economy.py` runs continuously (until `CTRL-C`) and every 15 seconds:
+- Kills the `fm-witness` tmux session (continues silently if it doesn't exist)
+- Runs `gt deacon stop`
+
+Use this to reduce resource usage when full rig watching is not needed.
+
+Start economy mode:
+
+```bash
+make economy
+```
+
 Run tests:
 
 ```bash
